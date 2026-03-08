@@ -159,3 +159,20 @@ jobs:
         with:
           name: openWRT-build-result
           path: openWRT/bin/targets
+
+      - name: 编译后清理 (Post-build cleanup)
+        if: always()
+        run: |
+          echo "开始编译后清理..."
+          sudo apt clean
+          sudo apt autoremove -y --purge
+          sudo rm -rf /var/lib/apt/lists/*
+          sudo rm -rf /tmp/*
+          rm -rf openWRT/build_dir/target-*/root-* 2>/dev/null || true
+          rm -rf openWRT/tmp/* 2>/dev/null || true
+          rm -rf openWRT/staging_dir/* 2>/dev/null || true
+          rm -rf openWRT/dl/* 2>/dev/null || true
+          echo "=============================================================================="
+          echo "编译后磁盘使用情况:"
+          df -hT
+          echo "=============================================================================="
